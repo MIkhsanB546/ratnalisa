@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('id_petugas', 5)->primary();
             $table->string('nama', 100);
             $table->string('username', 50)->unique();
-            $table->string('password', 20);
+            $table->string('password');
             $table->enum('role', ['admin', 'marketing', 'manager', 'cs', 'staff_pelayanan']);
             $table->timestamps();
         });

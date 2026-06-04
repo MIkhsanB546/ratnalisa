@@ -15,7 +15,7 @@ return new class extends Migration
             $table->string('id_pasien', 10)->primary();
             $table->string('nama', 100);
             $table->string('email', 100)->unique();
-            $table->string('password', 20);
+            $table->string('password');
             $table->string('no_hp', 15);
             $table->date('tgl_lahir');
             $table->enum('jenis_kelamin', ['L', 'P']);
