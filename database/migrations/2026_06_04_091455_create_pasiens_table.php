@@ -11,8 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pasiens', function (Blueprint $table) {
-            $table->id();
+        Schema::create('pasien', function (Blueprint $table) {
+            $table->string('id_pasien', 10)->primary();
+            $table->string('nama', 100);
+            $table->string('email', 100)->unique();
+            $table->string('password', 20);
+            $table->string('no_hp', 15);
+            $table->date('tgl_lahir');
+            $table->enum('jenis_kelamin', ['L', 'P']);
+            $table->text('alamat');
             $table->timestamps();
         });
     }

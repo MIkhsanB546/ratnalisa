@@ -11,8 +11,33 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('pembayarans', function (Blueprint $table) {
-            $table->id();
+        Schema::create('pembayaran', function (Blueprint $table) {
+            $table->string('id_pembayaran', 13)->primary();
+
+            $table->string('id_pendaftaran', 12);
+            $table->foreign('id_pendaftaran')
+                ->references('id_pendaftaran')
+                ->on('pendaftaran')
+                ->cascadeOnUpdate()
+                ->cascadeOnDelete();
+
+            $table->date('tanggal_bayar');
+
+            $table->enum('metode_bayar', [
+                'transfer',
+                'qris',
+                'tunai',
+                'lainnya'
+            ]);
+
+            $table->decimal('total_bayar', 12, 2);
+
+            $table->enum('status_bayar', [
+                'pending',
+                'berhasil',
+                'gagal'
+            ]);
+
             $table->timestamps();
         });
     }

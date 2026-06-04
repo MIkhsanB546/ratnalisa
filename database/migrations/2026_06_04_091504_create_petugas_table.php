@@ -12,7 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('petugas', function (Blueprint $table) {
-            $table->id();
+            $table->string('id_petugas', 5)->primary();
+            $table->string('nama', 100);
+            $table->string('username', 50)->unique();
+            $table->string('password', 20);
+            $table->enum('role', ['admin', 'marketing', 'manager', 'cs', 'staff_pelayanan']);
             $table->timestamps();
         });
     }

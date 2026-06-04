@@ -11,8 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('layanans', function (Blueprint $table) {
-            $table->id();
+        Schema::create('layanan', function (Blueprint $table) {
+            $table->string('id_layanan', 5)->primary();
+
+            $table->string('id_kategori', 3);
+            $table->foreign('id_kategori')
+                ->references('id_kategori')
+                ->on('kategori_layanan')
+                ->cascadeOnUpdate()
+                ->restrictOnDelete();
+
+            $table->string('nama_layanan', 100);
+            $table->decimal('harga', 12, 2);
+            $table->enum('status', ['aktif', 'nonaktif']);
+
             $table->timestamps();
         });
     }
