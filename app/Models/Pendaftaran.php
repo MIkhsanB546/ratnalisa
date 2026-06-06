@@ -2,10 +2,14 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Pendaftaran extends Model
 {
+    use HasFactory;
+
     protected $table = 'pendaftaran';
 
     protected $primaryKey = 'id_pendaftaran';
@@ -29,9 +33,13 @@ class Pendaftaran extends Model
 
         static::creating(function ($pendaftaran) {
 
+            if (!empty($pendaftaran->id_pendaftaran)) {
+                return;
+            }
+
             $prefix = $pendaftaran->jenis_kunjungan ?? 'KB';
 
-            $date = now()->format('ymd');
+            $date = Carbon::parse($pendaftaran->tanggal_daftar ?? now())->format('ymd');
 
             $last = self::where(
                 'id_pendaftaran',

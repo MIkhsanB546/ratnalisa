@@ -2,10 +2,14 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Pembayaran extends Model
 {
+    use HasFactory;
+
     protected $table = 'pembayaran';
 
     protected $primaryKey = 'id_pembayaran';
@@ -29,7 +33,11 @@ class Pembayaran extends Model
 
         static::creating(function ($pembayaran) {
 
-            $date = now()->format('ymd');
+            if (!empty($pembayaran->id_pembayaran)) {
+                return;
+            }
+
+            $date = Carbon::parse($pembayaran->tanggal_bayar ?? now())->format('ymd');
 
             $last = self::where(
                 'id_pembayaran',
