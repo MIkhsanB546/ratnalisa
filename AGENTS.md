@@ -84,59 +84,93 @@ Use middleware to protect routes.
 
 ---
 
-## Database Conventions
+## Database Specification Rules
 
-Always use Eloquent relationships.
+All code generated must follow the database specification exactly.
 
 ### Pasien
 
-Relationship:
+| Field         | Type         |
+| ------------- | ------------ |
+| id_pasien     | varchar(10)  |
+| nama          | varchar(100) |
+| email         | varchar(100) |
+| password      | varchar(255) |
+| no_hp         | varchar(15)  |
+| tgl_lahir     | date         |
+| jenis_kelamin | enum         |
+| alamat        | text         |
 
-- hasMany(Pendaftaran)
+### Petugas
 
-### Pendaftaran
-
-Relationship:
-
-- belongsTo(Pasien)
-- hasMany(DetailPendaftaran)
-- hasOne(Pembayaran)
-
-### DetailPendaftaran
-
-Relationship:
-
-- belongsTo(Pendaftaran)
-- belongsTo(Layanan)
-
-### Layanan
-
-Relationship:
-
-- belongsTo(KategoriLayanan)
-- hasMany(DetailPendaftaran)
+| Field      | Type         |
+| ---------- | ------------ |
+| id_petugas | varchar(5)   |
+| nama       | varchar(100) |
+| username   | varchar(50)  |
+| password   | varchar(255) |
+| role       | enum         |
 
 ### KategoriLayanan
 
-Relationship:
+| Field         | Type         |
+| ------------- | ------------ |
+| id_kategori   | varchar(3)   |
+| nama_kategori | varchar(100) |
+| keterangan    | text         |
 
-- hasMany(Layanan)
+### Layanan
+
+| Field        | Type          |
+| ------------ | ------------- |
+| id_layanan   | varchar(5)    |
+| id_kategori  | varchar(3)    |
+| nama_layanan | varchar(100)  |
+| harga        | decimal(12,2) |
+| status       | enum          |
+
+### Pendaftaran
+
+| Field          | Type        |
+| -------------- | ----------- |
+| id_pendaftaran | varchar(12) |
+| id_pasien      | varchar(10) |
+| tanggal_daftar | date        |
+| jadwal_periksa | datetime    |
+| status         | enum        |
+| catatan        | text        |
+
+### DetailPendaftaran
+
+| Field          | Type          |
+| -------------- | ------------- |
+| id_detail      | varchar(5)    |
+| id_pendaftaran | varchar(12)   |
+| id_layanan     | varchar(5)    |
+| subtotal       | decimal(12,2) |
 
 ### Pembayaran
 
-Relationship:
-
-- belongsTo(Pendaftaran)
+| Field          | Type          |
+| -------------- | ------------- |
+| id_pembayaran  | varchar(13)   |
+| id_pendaftaran | varchar(12)   |
+| tanggal_bayar  | date          |
+| metode_bayar   | enum          |
+| total_bayar    | decimal(12,2) |
+| status_bayar   | enum          |
 
 ---
 
 ## ID Generation Rules
 
-Primary keys are VARCHAR.
+Primary keys use meaningful business codes.
 
-Never use auto increment IDs.
+Never use auto increment.
 
-Generate IDs automatically using the following formats.
+Users must never enter IDs manually.
+
+All IDs must be generated automatically.
 
 ---
 
@@ -144,26 +178,26 @@ Generate IDs automatically using the following formats.
 
 Format:
 
-PSYYMMNNNN
+YYMMDDNNNN
 
 Example:
 
-PS26050001
+2605160001
 
 Meaning:
 
-- PS = Pasien
-- YY = Tahun daftar (2 digit)
-- MM = Bulan daftar (2 digit)
-- NNNN = Nomor urut pasien pada bulan tersebut
+- YY = year
+- MM = month
+- DD = day
+- NNNN = registration sequence for that day
 
-Example:
+Examples:
 
-PS26050001
-PS26050002
-PS26050003
+2605160001
+2605160002
+2605160003
 
-If the month changes, numbering restarts from 0001.
+Reset sequence every day.
 
 ---
 
@@ -171,34 +205,29 @@ If the month changes, numbering restarts from 0001.
 
 Format:
 
-PTRRNNN
+RRNNN
 
-Example:
+Examples:
 
-PTAD001
-PTCS001
-PTMG001
+AD001
+CS001
+MG001
+IT001
 
 Meaning:
 
-- PT = Petugas
-- RR = Inisial jabatan
-- NNN = Nomor urut berdasarkan jabatan
+- RR = role code
+- NNN = sequence within the same role
 
-Role Mapping:
+Role examples:
 
 - AD = Admin
 - CS = Customer Service
 - MG = Manager
+- IT = IT Staff
+- SD = HR Staff
 
-Examples:
-
-PTAD001
-PTAD002
-PTCS001
-PTMG001
-
-Numbering is separated by role.
+Sequence is independent for each role.
 
 ---
 
@@ -206,24 +235,27 @@ Numbering is separated by role.
 
 Format:
 
-KTNNN
-
-Example:
-
-KT001
-KT002
-KT003
-
-Meaning:
-
-- KT = Kategori Layanan
-- NNN = Nomor urut kategori
+CCC
 
 Examples:
 
-KT001
-KT002
-KT003
+HEM
+PAT
+KIM
+
+Meaning:
+
+- CCC = 3-character category code
+
+The code itself is the primary key.
+
+Examples:
+
+HEM = Hematologi
+PAT = Patologi
+KIM = Kimia Klinik
+
+No numeric sequence required.
 
 ---
 
@@ -231,24 +263,26 @@ KT003
 
 Format:
 
-LYNNN
-
-Example:
-
-LY001
-LY002
-LY003
-
-Meaning:
-
-- LY = Layanan
-- NNN = Nomor urut layanan
+CCCNN
 
 Examples:
 
-LY001
-LY002
-LY003
+HEM01
+HEM02
+PAT01
+
+Meaning:
+
+- CCC = kategori layanan
+- NN = service sequence within category
+
+Examples:
+
+HEM01 = Hemoglobin
+HEM02 = Leukosit
+PAT01 = Patologi Anatomi
+
+Sequence restarts for each category.
 
 ---
 
@@ -256,27 +290,22 @@ LY003
 
 Format:
 
-DFYYMMDDNNNN
-
-Example:
-
-DF2605210003
-
-Meaning:
-
-- DF = Pendaftaran
-- YY = Tahun pendaftaran
-- MM = Bulan pendaftaran
-- DD = Tanggal pendaftaran
-- NNNN = Nomor urut pendaftaran pada hari tersebut
+SSYYMMDDNNNN
 
 Examples:
 
-DF2605210001
-DF2605210002
-DF2605210003
+KB2605210003
+KL2605210001
 
-Numbering restarts every day.
+Meaning:
+
+- SS = status kunjungan
+- KB = Kunjungan Baru
+- KL = Kunjungan Lama
+- YYMMDD = registration date
+- NNNN = registration sequence on that date
+
+Sequence resets daily.
 
 ---
 
@@ -284,27 +313,20 @@ Numbering restarts every day.
 
 Format:
 
-DTYYMMDDNNNN
-
-Example:
-
-DT2605120005
-
-Meaning:
-
-- DT = Detail Pendaftaran
-- YY = Tahun pendaftaran
-- MM = Bulan pendaftaran
-- DD = Tanggal pendaftaran
-- NNNN = Nomor urut detail pendaftaran pada hari tersebut
+DNNNN
 
 Examples:
 
-DT2605120001
-DT2605120002
-DT2605120003
+D0001
+D0002
+D0003
 
-Numbering restarts every day.
+Meaning:
+
+- D = Detail
+- NNNN = sequence number
+
+Continuous numbering.
 
 ---
 
@@ -314,25 +336,51 @@ Format:
 
 INVYYMMDDNNNN
 
-Example:
-
-INV2605210005
-
-Meaning:
-
-- INV = Invoice
-- YY = Tahun pembayaran
-- MM = Bulan pembayaran
-- DD = Tanggal pembayaran
-- NNNN = Nomor urut pembayaran pada hari tersebut
-
 Examples:
 
 INV2605210001
 INV2605210002
-INV2605210003
 
-Numbering restarts every day.
+Meaning:
+
+- INV = Invoice
+- YYMMDD = payment date
+- NNNN = payment sequence for that date
+
+Sequence resets daily.
+
+---
+
+## Generation Guidelines
+
+When generating CRUD modules:
+
+Always generate:
+
+- Model
+- Controller
+- Form Request
+- Routes
+- Blade Views
+- Seeder
+
+Always include:
+
+- Eloquent relationships
+- Validation rules
+- Automatic ID generation
+
+Do not use placeholder code.
+
+Provide complete implementations.
+
+Place ID generation logic inside:
+
+- Service classes
+- Model methods
+- Traits
+
+Do not place ID generation logic directly in controllers unless explicitly requested.
 
 ---
 
