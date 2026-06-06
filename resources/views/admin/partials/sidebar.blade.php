@@ -27,6 +27,13 @@
                     </a>
                 </li>
 
+                <li class="nav-item">
+                    <a href="{{ route('pasien.index') }}" class="nav-link">
+                        <i class="nav-icon bi bi-person"></i>
+                        <p>Pasien</p>
+                    </a>
+                </li>
+
             </ul>
             <!--end::Sidebar Menu-->
 
