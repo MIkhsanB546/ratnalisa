@@ -33,8 +33,8 @@ return new class extends Migration
             $table->decimal('total_bayar', 12, 2);
 
             $table->enum('status_bayar', [
-                'pending',
-                'berhasil',
+                'belum_lunas',
+                'lunas',
                 'gagal'
             ]);
 
