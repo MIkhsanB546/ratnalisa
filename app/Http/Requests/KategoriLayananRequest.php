@@ -23,6 +23,7 @@ class KategoriLayananRequest extends FormRequest
             'id_kategori' => [
                 'required',
                 'string',
+                'kode' => ['required', 'regex:/^[A-Z]+$/'],
                 'max:3',
                 'unique:kategori_layanan,id_kategori,' .
                     $this->route('kategori_layanan')?->id_kategori .
