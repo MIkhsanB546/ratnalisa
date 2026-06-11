@@ -33,6 +33,13 @@
                         <p>Pasien</p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('kategori-layanan.index') }}" class="nav-link">
+                        <i class="nav-icon bi bi-list"></i>
+                        <p>Kategori Layanan</p>
+                    </a>
+                </li>
+                </li>
 
             </ul>
             <!--end::Sidebar Menu-->
