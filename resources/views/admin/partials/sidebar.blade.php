@@ -39,6 +39,12 @@
                         <p>Kategori Layanan</p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('layanan.index') }}" class="nav-link">
+                        <i class="nav-icon bi bi-list"></i>
+                        <p>Layanan</p>
+                    </a>
+                </li>
                 </li>
 
             </ul>

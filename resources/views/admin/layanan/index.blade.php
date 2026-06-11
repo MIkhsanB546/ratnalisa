@@ -28,7 +28,7 @@
         <div class="d-flex flex-wrap gap-2 mb-3">
             <a href="{{ route('layanan.create') }}" class="btn btn-sm btn-primary">
                 <i class="bi bi-plus-lg me-1" aria-hidden="true"></i>
-                Tambah Kategori Layanan
+                Tambah Layanan
             </a>
             <button id="export-csv" type="button" class="btn btn-sm btn-outline-secondary">
                 <i class="bi bi-filetype-csv me-1" aria-hidden="true"></i>
@@ -44,31 +44,37 @@
             </button>
         </div>
         <div id="users-table" class="table-responsive">
-            <table class="table table-bordered table-striped table-hover align-middle mb-0" id="kategori-layanan-table">
+            <table class="table table-bordered table-striped table-hover align-middle mb-0" id="layanan-table">
                 <thead class="table-light">
                     <tr>
                         <th scope="col" style="width: 3rem">No</th>
                         <th scope="col">ID Layanan</th>
                         <th scope="col">Nama Layanan</th>
                         <th scope="col">Harga</th>
+                        <th scope="col">Status</th>
                         <th scope="col" style="width: 6rem">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($kategoriLayanan as $item)
+                    @forelse ($layanan as $item)
                     <tr>
                         <td>{{ $loop->iteration }}</td>
-                        <td>{{ $item->id_kategori }}</td>
-                        <td>{{ $item->nama_kategori }}</td>
-                        <td>{{ $item->keterangan }}</td>
+                        <td>{{ $item->id_layanan }}</td>
+                        <td>{{ $item->nama_layanan }}</td>
+                        <td>{{ number_format((float) $item->harga, 2, ',', '.') }}</td>
                         <td>
-                            <a href="{{ route('kategori-layanan.edit', $item) }}" class="btn btn-sm btn-warning">
+                            <span class="badge bg-{{ $item->status === 'aktif' ? 'success' : 'danger' }}">
+                                {{ ucfirst($item->status) }}
+                            </span>
+                        </td>
+                        <td>
+                            <a href="{{ route('layanan.edit', $item) }}" class="btn btn-sm btn-warning">
                                 <i class="bi bi-pencil-square" aria-hidden="true"></i>
                                 <span class="visually-hidden">Edit</span>
                             </a>
-                            <form action="{{ route('kategori-layanan.destroy', $item) }}" method="POST"
+                            <form action="{{ route('layanan.destroy', $item) }}" method="POST"
                                 class="d-inline"
-                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus kategori layanan ini?');">
+                                onsubmit="return confirm('Apakah Anda yakin ingin menghapus layanan ini?');">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" class="btn btn-sm btn-danger">
@@ -81,7 +87,8 @@
                     @empty
                     <tr>
                         <td colspan="5" class="text-center text-muted py-4">
-                            Belum ada data kategori layanan.
+                            Belum ada data layanan.
+
                         </td>
                     </tr>
                     @endforelse
@@ -95,7 +102,7 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        const table = document.getElementById('kategori-layanan-table');
+        const table = document.getElementById('layanan-table');
         const filter = document.getElementById('table-filter');
         const csvButton = document.getElementById('export-csv');
         const jsonButton = document.getElementById('export-json');
@@ -143,7 +150,7 @@
             const csv = rows.map((row) => row.map((value) => `"${value.replace(/"/g, '""')}"`).join(
                 ',')).join('\n');
 
-            downloadFile('data-kategori-layanan.csv', csv, 'text/csv;charset=utf-8;');
+            downloadFile('data-layanan.csv', csv, 'text/csv;charset=utf-8;');
         });
 
         jsonButton?.addEventListener('click', () => {
@@ -153,7 +160,7 @@
                 row[index] ?? ''
             ])));
 
-            downloadFile('data-kategori-layanan.json', JSON.stringify(data, null, 2),
+            downloadFile('data-layanan.json', JSON.stringify(data, null, 2),
                 'application/json;charset=utf-8;');
         });
 

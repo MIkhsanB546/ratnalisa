@@ -6,6 +6,7 @@ use App\Models\Pasien;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+
 class PasienRequest extends FormRequest
 {
     public function authorize(): bool
